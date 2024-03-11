@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:iFolor.StudentManager.Windows.Converters">
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters:IntToPostixedStringConverter x:Key="IntToPostfixedStringConverter" />
+</ResourceDictionary>

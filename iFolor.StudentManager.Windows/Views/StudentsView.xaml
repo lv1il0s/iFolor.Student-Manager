@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="iFolor.StudentManager.Windows.Views.StudentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:iFolor.StudentManager.Windows.Converters"
+             xmlns:local="clr-namespace:iFolor.StudentManager.Windows.Views"
+             xmlns:msBehaviors="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:iFolor.StudentManager.Windows.Behaviors"
+             xmlns:helpers="clr-namespace:iFolor.StudentManager.Windows.Views.Helpers"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate x:Key="MaleStudentTemplate">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="FaceMale" />
+                <TextBlock Text="{Binding FirstName,  ValidatesOnNotifyDataErrors=False}"
+                           Margin="5 0 0 0" />
+                <TextBlock Text="{Binding LastName, ValidatesOnNotifyDataErrors=False}"
+                           FontStyle="Italic"
+                           Margin="5 0 0 0" />
+                <TextBlock Text="," />
+                <TextBlock Text="{Binding Age, ValidatesOnNotifyDataErrors=False, 
+                                               Converter={StaticResource IntToPostfixedStringConverter}, 
+                                               ConverterParameter=' years'}"
+                           Margin="5 0 0 0" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FemaleStudentTemplate">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="FaceFemale" />
+                <TextBlock Text="{Binding FirstName,  ValidatesOnNotifyDataErrors=False}"
+                           Margin="5 0 0 0" />
+                <TextBlock Text="{Binding LastName, ValidatesOnNotifyDataErrors=False}"
+                           FontStyle="Italic"
+                           Margin="5 0 0 0" />
+                <TextBlock Text="," />
+                <TextBlock Text="{Binding Age, ValidatesOnNotifyDataErrors=False, 
+                               Converter={StaticResource IntToPostfixedStringConverter}, 
+                               ConverterParameter=' years'}"
+                           Margin="5 0 0 0" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnspecifiedStudentTemplate">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="AccountAdd" />
+                <TextBlock Text="{Binding FirstName,  ValidatesOnNotifyDataErrors=False}"
+                           Margin="5 0 0 0" />
+                <TextBlock Text="{Binding LastName, ValidatesOnNotifyDataErrors=False}"
+                           FontStyle="Italic"
+                           Margin="5 0 0 0" />
+                <TextBlock Text="," />
+                <TextBlock Text="{Binding Age, ValidatesOnNotifyDataErrors=False, 
+                               Converter={StaticResource IntToPostfixedStringConverter}, 
+                               ConverterParameter=' years'}"
+                           Margin="5 0 0 0" />
+            </StackPanel>
+        </DataTemplate>
+        <converters:GenderTemplateSelector x:Key="GenderTemplateSelector"
+                                           MaleStudentTemplate="{StaticResource MaleStudentTemplate}"
+                                           FemaleStudentTemplate="{StaticResource FemaleStudentTemplate}"
+                                           UnspecifiedStudentTemplate="{StaticResource UnspecifiedStudentTemplate}" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            
+            <ListView x:Name="listView_students"
+                      ItemsSource="{Binding Students}"
+                      SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
+                      ItemTemplateSelector="{StaticResource GenderTemplateSelector}"
+                      AlternationCount="2">
+                <msBehaviors:Interaction.Behaviors>
+                    <behaviors:ScrollToSelectedItemBehavior />
+                </msBehaviors:Interaction.Behaviors>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <!-- Default background for even rows -->
+                        <Setter Property="Background"
+                                Value="White" />
+                        <Style.Triggers>
+                            <!-- LightGray background for odd rows -->
+                            <Trigger Property="ItemsControl.AlternationIndex"
+                                     Value="1">
+                                <Setter Property="Background"
+                                        Value="LightGray" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.InputBindings>
+                    <KeyBinding Key="Delete"
+                                Command="{Binding DeleteCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}, Path=SelectedItems, Mode=OneWay}" />
+                </ListView.InputBindings>
+            </ListView>
+            <local:StudentDetailsView Grid.Column="1" />
+            
+        </Grid>
+        <DockPanel Grid.Row="1"
+                   Background="{StaticResource iFolorRed}">
+
+            <Button Content="Add"
+                    Command="{Binding AddCommand}"
+                    DockPanel.Dock="Left"
+                    Margin="10"
+                    Width="75" />
+
+            <Button Content="Delete"
+                    Command="{Binding DeleteCommand}"
+                    CommandParameter="{Binding ElementName=listView_students, Path=SelectedItems, Mode=OneWay}"
+                    DockPanel.Dock="Left"
+                    Width="75"
+                    Margin="0 10 10 10" />
+
+            <Button Content="Save"
+                    Command="{Binding SaveCommand}"
+                    DockPanel.Dock="Right"
+                    Width="75"
+                    Margin="0 10 10 10"
+                    HorizontalAlignment="Right"/>
+
+            
+
+        </DockPanel>
+    </Grid>
+</UserControl>
